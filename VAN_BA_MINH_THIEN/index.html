@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f6f7f4" />
+  <meta name="description" content="Nền tảng kết nối sinh viên và nhà tuyển dụng bằng gợi ý việc làm minh bạch." />
+  <title>Hướng — Tìm đúng việc, gặp đúng người</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+  <link rel="stylesheet" href="src/styles/recruiter.css" />
+  <link rel="stylesheet" href="src/styles/auth.css" />
+  <link rel="stylesheet" href="src/styles/auth-register.css" />
+  <link rel="stylesheet" href="src/styles/admin.css" />
+  <link rel="stylesheet" href="src/styles/demo-accounts.css" />
+  <link rel="stylesheet" href="src/styles/student-profile.css" />
+  <link rel="stylesheet" href="src/styles/cvs.css" />
+  <link rel="stylesheet" href="src/styles/company-admin.css" />
+  <script src="src/scripts/app.js" defer></script>
+  <script src="src/scripts/auth.js" defer></script>
+  <script src="src/scripts/student-profile.js" defer></script>
+  <script src="src/scripts/cvs.js" defer></script>
+  <script src="src/scripts/company-admin.js" defer></script>
+  <script src="src/scripts/role-permissions.js" defer></script>
+  <script src="src/scripts/job-workflow.js" defer></script>
+</head>
+<body>
+  <main class="auth-shell" id="auth-shell">
+    <section class="auth-card">
+      <a class="brand auth-brand" href="#"><span class="brand-mark">h</span><span>hướng<span class="brand-dot">.</span></span></a>
+      <div class="auth-intro"><div class="eyebrow"><span class="sparkle">✳</span> CƠ HỘI MỚI BẮT ĐẦU TỪ ĐÂY</div><h1 id="auth-title">Chào mừng bạn trở lại</h1><p id="auth-subtitle">Đăng nhập để tiếp tục hành trình nghề nghiệp của bạn.</p></div>
+      <div class="auth-tabs" role="tablist"><button class="auth-tab active" data-auth-view="login" role="tab">Đăng nhập</button><button class="auth-tab" data-auth-view="register" role="tab">Tạo tài khoản</button></div>
+      <div class="auth-alert" id="auth-alert" role="alert" aria-live="polite"></div>
+      <form class="auth-form" id="login-form">
+        <label>Email<input type="email" name="email" autocomplete="email" placeholder="ban@email.com" required /></label>
+        <label class="password-label">Mật khẩu<a href="#forgot" data-auth-view="forgot">Quên mật khẩu?</a><input type="password" name="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required /></label>
+        <button class="button button-primary auth-submit" type="submit">Đăng nhập <span>→</span></button>
+        <section class="demo-accounts" id="demo-accounts" hidden aria-label="Tài khoản demo"><div class="demo-heading"><span>⌘</span><div><strong>Tài khoản demo để thử nhanh</strong><small>Chỉ hiển thị trong môi trường development</small></div></div><div class="demo-account-list" id="demo-account-list"></div><p class="demo-notice" id="demo-notice"></p></section>
+        <p class="auth-switch">Chưa có tài khoản? <button type="button" data-auth-view="register">Đăng ký miễn phí</button></p>
+      </form>
+      <form class="auth-form hidden" id="register-form">
+        <label>Bạn tham gia với vai trò<select name="role" id="register-role" required><option value="student">Sinh viên</option><option value="recruiter">Nhà tuyển dụng</option></select></label>
+        <div class="company-signup-fields" id="company-signup-fields" hidden>
+          <label>Tên công ty<input type="text" name="company_name" minlength="2" maxlength="200" placeholder="Tên doanh nghiệp" /></label>
+          <label>Mã số thuế<input type="text" name="tax_code" minlength="8" maxlength="20" placeholder="Mã số thuế công ty" /></label>
+          <label>Chức vụ của bạn<input type="text" name="job_title" minlength="2" maxlength="120" placeholder="Ví dụ: Chuyên viên tuyển dụng" /></label>
+        </div>
+        <label>Họ và tên<input type="text" name="full_name" autocomplete="name" minlength="2" maxlength="160" placeholder="Nguyễn Minh Anh" required /></label>
+        <label>Email<input type="email" name="email" autocomplete="email" placeholder="ban@email.com" required /></label>
+        <label>Mật khẩu<input type="password" name="password" autocomplete="new-password" minlength="10" placeholder="Tối thiểu 10 ký tự, gồm hoa, thường và số" required /></label>
+        <label class="consent-check"><input type="checkbox" name="accept_terms" required /><span>Tôi đồng ý với <a href="#terms">Điều khoản sử dụng</a>.</span></label>
+        <label class="consent-check"><input type="checkbox" name="accept_data_processing" required /><span>Tôi đồng ý cho xử lý dữ liệu cá nhân theo <a href="#privacy">Chính sách quyền riêng tư</a>.</span></label>
+        <button class="button button-primary auth-submit" type="submit">Tạo tài khoản <span>→</span></button>
+        <p class="auth-switch">Đã có tài khoản? <button type="button" data-auth-view="login">Đăng nhập</button></p>
+      </form>
+      <form class="auth-form hidden" id="verify-form">
+        <div class="verify-icon">✉</div><h2>Kiểm tra email của bạn</h2><p>Nhập token xác minh trong email để kích hoạt tài khoản. Khi chạy local, email nằm trong hộp thư Mailpit.</p>
+        <label>Email<input type="email" name="email" autocomplete="email" required /></label>
+        <label>Token xác minh<textarea name="token" rows="3" minlength="32" placeholder="Dán token trong email" required></textarea></label>
+        <button class="button button-primary auth-submit" type="submit">Xác minh email <span>→</span></button>
+        <button class="auth-resend" type="button" id="resend-verification">Gửi lại email xác minh</button>
+        <p class="auth-switch"><button type="button" data-auth-view="login">Quay lại đăng nhập</button></p>
+      </form>
+      <form class="auth-form hidden" id="forgot-form">
+        <h2>Đặt lại mật khẩu</h2><p>Nhập email tài khoản. Nếu hợp lệ, hướng dẫn đặt lại sẽ được gửi tới email đó.</p>
+        <label>Email<input type="email" name="email" autocomplete="email" placeholder="ban@email.com" required /></label>
+        <button class="button button-primary auth-submit" type="submit">Gửi hướng dẫn <span>→</span></button>
+        <p class="auth-switch"><button type="button" data-auth-view="login">Quay lại đăng nhập</button></p>
+      </form>
+      <form class="auth-form hidden" id="reset-form">
+        <h2>Tạo mật khẩu mới</h2>
+        <label>Token đặt lại<textarea name="token" rows="3" minlength="32" placeholder="Dán token trong email" required></textarea></label>
+        <label>Mật khẩu mới<input type="password" name="new_password" autocomplete="new-password" minlength="10" placeholder="Tối thiểu 10 ký tự, gồm hoa, thường và số" required /></label>
+        <button class="button button-primary auth-submit" type="submit">Lưu mật khẩu mới <span>→</span></button>
+        <p class="auth-switch"><button type="button" data-auth-view="login">Quay lại đăng nhập</button></p>
+      </form>
+      <div class="auth-footer"><span>© 2026 Hướng</span><span>Dữ liệu của bạn được bảo vệ</span></div>
+    </section>
+    <aside class="auth-art"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-copy"><span class="art-kicker">TÌM ĐÚNG VIỆC. GẶP ĐÚNG NGƯỜI.</span><h2>Mỗi hành trình<br />bắt đầu từ<br /><em>một cơ hội.</em></h2><p>Kết nối kỹ năng của bạn với những cơ hội phù hợp, minh bạch và có ý nghĩa.</p><div class="art-proof"><span class="proof-avatars"><i>H</i><i>M</i><i>A</i></span><span>Cùng sinh viên mở lối tương lai</span></div></div><div class="art-card"><span class="art-card-icon">✳</span><span><strong>Phù hợp với bạn</strong><small>Gợi ý có giải thích từ Hướng AI</small></span><b>94%</b></div><div class="art-decoration">✳</div></aside>
+  </main>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#home" aria-label="Hướng, trang chủ"><span class="brand-mark">h</span><span>hướng<span class="brand-dot">.</span></span></a>
+      <div class="workspace-label">KHÔNG GIAN CỦA BẠN</div>
+      <nav class="primary-nav" aria-label="Điều hướng chính">
+        <button class="nav-link active" data-view="home"><span class="nav-icon">⌂</span>Tổng quan</button>
+        <button class="nav-link" data-view="jobs"><span class="nav-icon">⌕</span>Tìm việc <span class="nav-count">12</span></button>
+        <button class="nav-link" data-view="applications"><span class="nav-icon">▤</span>Đơn ứng tuyển</button>
+        <button class="nav-link" data-view="saved"><span class="nav-icon">♡</span>Việc đã lưu</button>
+        <button class="nav-link" data-view="profile"><span class="nav-icon">◉</span>Hồ sơ của tôi</button>
+        <button class="nav-link recruiter-nav" data-view="recruiter"><span class="nav-icon">▥</span>Không gian tuyển dụng <span class="nav-count">HR</span></button>
+        <button class="nav-link admin-nav" data-view="admin"><span class="nav-icon">⚙</span>Quản trị hệ thống <span class="nav-count">ADMIN</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><div class="help-icon">✦</div><strong>Để AI giúp bạn</strong><p>Nhận gợi ý phù hợp hơn khi cập nhật hồ sơ.</p><button data-view="profile">Hoàn thiện hồ sơ <span>→</span></button></div>
+        <button class="account-row"><span class="avatar avatar-photo">MT</span><span class="account-copy"><strong>Minh Thiện</strong><small>Sinh viên · Đã xác thực</small></span><span class="more">···</span></button>
+      </div>
+    </aside>
+
+    <main class="main-area" id="main-area">
+      <header class="topbar"><button class="mobile-menu" id="mobile-menu" aria-label="Mở menu">☰</button><div class="breadcrumb"><span id="workspace-name">Không gian sinh viên</span><span class="crumb-slash">/</span><strong id="breadcrumb-current">Tổng quan</strong></div><div class="top-actions"><button class="icon-button" aria-label="Trợ giúp">?</button><button class="icon-button notification-button" aria-label="Thông báo">♧<i></i></button><span class="top-separator"></span><button class="top-profile" id="profile-menu-button"><span class="avatar avatar-photo">MT</span><span id="signed-in-name">Minh Thiện</span><span class="chevron">⌄</span></button><button class="logout-button" id="logout-button">Đăng xuất</button></div></header>
+
+      <section class="view active" id="view-home">
+        <div class="welcome-row"><div><div class="eyebrow"><span class="sparkle">✳</span> THỨ BA, 3 THÁNG 11, 2026</div><h1>Chào Minh Thiện <span class="wave">✋</span></h1><p class="subheading">Một cơ hội tốt đang chờ bạn ở phía trước.</p></div><button class="button button-outline" data-view="profile"><span>＋</span> Cập nhật hồ sơ</button></div>
+        <div class="profile-progress-card"><div class="progress-icon">↗</div><div class="progress-copy"><strong>Hồ sơ của bạn đã hoàn thiện <b>72%</b></strong><p>Thêm dự án và kỹ năng để nhận gợi ý chính xác hơn.</p></div><div class="progress-track"><span style="width:72%"></span></div><button class="text-button" data-view="profile">Tiếp tục <span>→</span></button></div>
+        <div class="section-heading"><div><h2>Dành riêng cho bạn <span class="sparkle small">✳</span></h2><p>Dựa trên kỹ năng, nguyện vọng và hồ sơ của bạn</p></div><button class="link-button" data-view="jobs">Xem tất cả việc làm <span>→</span></button></div>
+        <div class="job-grid" id="featured-jobs"></div>
+        <div class="lower-grid"><section class="panel application-panel"><div class="panel-heading"><div><h2>Đơn ứng tuyển gần đây</h2><p>Theo dõi tiến trình ứng tuyển của bạn</p></div><button class="link-button" data-view="applications">Xem tất cả <span>→</span></button></div><div id="recent-applications"></div></section><section class="panel tip-panel"><div class="tip-top"><span class="tip-sparkle">✦</span><span class="tip-label">MẸO TỪ HƯỚNG AI</span><span class="tip-dots">···</span></div><h3>Một chút cải thiện,<br />cơ hội nhiều hơn.</h3><p>Hồ sơ có dự án thực tế nhận được nhiều lượt xem từ nhà tuyển dụng hơn <strong>2,4 lần.</strong></p><button class="tip-link" data-view="profile">Thêm dự án vào hồ sơ <span>→</span></button><div class="tip-decoration">✳</div></section></div>
+        <footer class="footer"><span>© 2025 Hướng. Kết nối cơ hội, mở lối tương lai.</span><span><a href="#privacy">Quyền riêng tư</a><a href="#support">Trợ giúp</a></span></footer>
+      </section>
+
+      <section class="view" id="view-jobs">
+        <div class="page-heading"><div><div class="eyebrow">CƠ HỘI DÀNH CHO BẠN</div><h1>Tìm công việc tiếp theo</h1><p class="subheading">Khám phá những vị trí phù hợp với hành trình của bạn.</p></div></div>
+        <div class="search-bar"><span>⌕</span><input id="job-search" type="search" placeholder="Tìm theo vị trí, kỹ năng hoặc công ty..." /><button class="button button-primary" id="search-button">Tìm kiếm</button></div>
+        <div class="filter-row"><label>Địa điểm <select id="location-filter"><option value="">Tất cả địa điểm</option><option>TP. Hồ Chí Minh</option><option>Hà Nội</option><option>Remote</option></select></label><label>Hình thức <select id="type-filter"><option value="">Tất cả hình thức</option><option>Thực tập</option><option>Toàn thời gian</option><option>Bán thời gian</option></select></label><button class="filter-reset" id="reset-filters">Xóa bộ lọc</button><span class="result-count" id="result-count"></span></div>
+        <div class="jobs-layout"><div class="job-list" id="all-jobs"></div><aside class="match-aside"><span class="tip-sparkle">✦</span><div class="eyebrow">HƯỚNG AI GỢI Ý</div><h3>Tìm việc hợp với bạn, dễ hơn.</h3><p>Gợi ý được xếp hạng dựa trên kỹ năng, mong muốn và thông tin bạn đã chia sẻ.</p><div class="match-legend"><span class="legend-dot"></span> Điểm phù hợp có thể giải thích</div><button class="text-button" data-view="profile">Cập nhật nguyện vọng →</button></aside></div>
+      </section>
+
+      <section class="view" id="view-applications"><div class="page-heading"><div><div class="eyebrow">HÀNH TRÌNH CỦA BẠN</div><h1>Đơn ứng tuyển</h1><p class="subheading">Mỗi bước tiến đều đưa bạn gần hơn với cơ hội phù hợp.</p></div></div><div class="stats-row"><div class="stat-card"><span>Đã ứng tuyển</span><strong id="stat-total">03</strong><small>Trong 30 ngày qua</small></div><div class="stat-card"><span>Đã xem hồ sơ</span><strong>02</strong><small class="positive">+1 trong tuần này</small></div><div class="stat-card"><span>Phỏng vấn</span><strong>01</strong><small>Sắp tới · 16 Tháng 5</small></div></div><div class="panel application-table-panel"><div class="panel-heading"><div><h2>Tất cả đơn ứng tuyển</h2><p>Cập nhật trạng thái gần nhất</p></div><select class="table-filter" id="application-filter"><option value="">Tất cả trạng thái</option><option value="Đã nộp">Đã nộp</option><option value="Đang xem xét">Đang xem xét</option><option value="Phỏng vấn">Phỏng vấn</option></select></div><div id="all-applications"></div></div></section>
+
+      <section class="view" id="view-saved"><div class="page-heading"><div><div class="eyebrow">LƯU LẠI ĐỂ KHÁM PHÁ SAU</div><h1>Việc làm đã lưu</h1><p class="subheading">Những cơ hội bạn quan tâm đang ở đây.</p></div></div><div class="job-grid saved-grid" id="saved-jobs"></div></section>
+
+      <section class="view" id="view-profile"><div class="page-heading"><div><div class="eyebrow">HỒ SƠ ỨNG VIÊN</div><h1>Hồ sơ của tôi</h1><p class="subheading">Giúp nhà tuyển dụng hiểu hơn về những gì bạn có thể làm.</p></div><button class="button button-outline" id="edit-profile">✎ Chỉnh sửa hồ sơ</button></div><div class="profile-layout"><section class="panel profile-main"><div class="profile-hero"><span class="avatar profile-avatar">MT</span><div><span class="verified-badge">✓ Đã xác thực sinh viên</span><h2>Minh Thiện</h2><p>Sinh viên năm 3 · Công nghệ thông tin</p><span class="profile-location">⌖ TP. Hồ Chí Minh</span></div><span class="open-to-work">● Đang tìm cơ hội</span></div><div class="profile-section"><div class="section-title"><h3>Giới thiệu</h3><button class="edit-section">✎</button></div><p>Sinh viên CNTT yêu thích phát triển sản phẩm web. Đang tìm kiếm cơ hội thực tập để áp dụng kiến thức và học hỏi trong môi trường thực tế.</p></div><div class="profile-section"><div class="section-title"><h3>Kỹ năng</h3><button class="edit-section">✎</button></div><div class="skill-chips"><span>React</span><span>JavaScript</span><span>TypeScript</span><span>Figma</span><span>Node.js</span><span>+ Thêm kỹ năng</span></div></div><div class="profile-section"><div class="section-title"><h3>Dự án nổi bật</h3><button class="edit-section">＋</button></div><div class="project-card"><div class="project-icon">◈</div><div><strong>Campus Connect</strong><p>Nền tảng kết nối cộng đồng sinh viên · React, Node.js</p></div><span class="project-date">2024</span></div></div><div class="profile-section"><div class="section-title"><h3>Nguyện vọng nghề nghiệp</h3><button class="edit-section">✎</button></div><div class="preference-grid"><div><small>Vị trí mong muốn</small><strong>Frontend Developer</strong></div><div><small>Hình thức</small><strong>Thực tập</strong></div><div><small>Địa điểm</small><strong>TP. Hồ Chí Minh · Remote</strong></div><div><small>Mức lương kỳ vọng</small><strong>4 – 7 triệu / tháng</strong></div></div></div></section><aside class="profile-side"><div class="panel visibility-panel"><div class="visibility-icon">◉</div><h3>Hồ sơ công khai</h3><p>Nhà tuyển dụng đã xác minh có thể tìm thấy hồ sơ của bạn.</p><label class="switch-row"><span>Cho phép tìm kiếm hồ sơ</span><input type="checkbox" checked id="visibility-toggle"><i></i></label><div class="privacy-note">Bạn có thể ẩn hồ sơ khỏi bất kỳ công ty nào trong phần cài đặt quyền riêng tư.</div></div><div class="panel profile-strength"><div class="panel-heading"><div><h3>Độ hoàn thiện hồ sơ</h3><p>Tốt lắm, chỉ còn một chút nữa!</p></div><strong>72%</strong></div><div class="progress-track"><span style="width:72%"></span></div><ul><li class="done">Thông tin cá nhân</li><li class="done">Kỹ năng</li><li class="pending">Thêm 1 dự án</li><li class="pending">Tải CV lên</li></ul></div></aside></div></section>
+
+      <section class="view" id="view-recruiter"><div class="page-heading"><div><div class="eyebrow">KHÔNG GIAN NHÀ TUYỂN DỤNG</div><h1>Chào đội ngũ tuyển dụng <span class="wave">✦</span></h1><p class="subheading">Tìm những ứng viên tiềm năng phù hợp với vị trí đang mở.</p></div><button class="button button-primary" id="create-job">＋ Đăng tin tuyển dụng</button></div><div class="stats-row recruiter-stats"><div class="stat-card"><span>Tin đang tuyển</span><strong>04</strong><small>1 tin sắp hết hạn</small></div><div class="stat-card"><span>Hồ sơ ứng tuyển mới</span><strong>28</strong><small class="positive">+8 trong tuần này</small></div><div class="stat-card"><span>Ứng viên phù hợp</span><strong>12</strong><small>Điểm phù hợp từ 75%</small></div></div><div class="section-heading"><div><h2>Ứng viên phù hợp với vị trí Frontend Intern <span class="sparkle small">✳</span></h2><p>Được xếp hạng theo kỹ năng và tiêu chí tuyển dụng</p></div><button class="link-button" id="view-all-candidates">Xem tất cả ứng viên <span>→</span></button></div><div class="candidate-list" id="candidate-list"></div></section>
+
+      <section class="view" id="view-admin"><div class="page-heading"><div><div class="eyebrow">HƯỚNG PLATFORM ADMIN</div><h1>Quản trị hệ thống</h1><p class="subheading">Tài khoản quản trị đã đăng nhập. Các công cụ kiểm duyệt sẽ được triển khai ở bước quản trị tiếp theo.</p></div><span class="admin-role-badge">● PLATFORM ADMIN</span></div><div class="panel admin-welcome"><div class="admin-welcome-icon">⚙</div><div><h2>Xin chào, <span id="admin-name">Admin</span></h2><p>Tài khoản này được tạo riêng trong seed development. Không thể đăng ký quyền admin từ form công khai.</p></div></div><div class="section-heading"><div><h2>Các module quản trị trong roadmap</h2><p>Đây là danh sách kế hoạch, chưa phải công cụ đang hoạt động.</p></div></div><div class="admin-roadmap"><article class="panel"><span>01</span><h3>Duyệt doanh nghiệp</h3><p>Xem hồ sơ và giấy tờ; duyệt, từ chối hoặc yêu cầu bổ sung.</p><small>Đang chờ triển khai</small></article><article class="panel"><span>02</span><h3>Kiểm duyệt tin tuyển dụng</h3><p>Kiểm tra tin bị gắn cờ, lưu lý do và xử lý vi phạm.</p><small>Đang chờ triển khai</small></article><article class="panel"><span>03</span><h3>Quản lý tài khoản</h3><p>Tìm kiếm, xác minh, khóa/mở tài khoản và xử lý yêu cầu dữ liệu.</p><small>Đang chờ triển khai</small></article><article class="panel"><span>04</span><h3>Nhật ký và chỉ số</h3><p>Theo dõi hành động nhạy cảm, hoạt động hệ thống và báo cáo.</p><small>Đang chờ triển khai</small></article></div></section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="modal-backdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" id="modal-close" aria-label="Đóng">×</button><div id="modal-content"></div></section></div>
+</body>
+</html>

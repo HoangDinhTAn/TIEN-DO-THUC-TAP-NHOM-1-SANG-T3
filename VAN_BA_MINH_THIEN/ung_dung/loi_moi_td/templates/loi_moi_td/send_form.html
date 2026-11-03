@@ -1,9 +1,0 @@
-{% extends "tai_khoan/base.html" %}
-{% block title %}Gửi lời mời{% endblock %}
-{% block content %}
-<section class="card">
-    <h1>Mời ứng viên: {{ candidate.full_name|default:candidate.school|default:"Ứng viên" }}</h1>
-    <p>Chọn tin tuyển dụng cụ thể và viết lời nhắn. Mỗi nhà tuyển dụng được gửi tối đa 10 lời mời trong 24 giờ.</p>
-    <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Gửi lời mời</button></form>
-</section>
-{% endblock %}

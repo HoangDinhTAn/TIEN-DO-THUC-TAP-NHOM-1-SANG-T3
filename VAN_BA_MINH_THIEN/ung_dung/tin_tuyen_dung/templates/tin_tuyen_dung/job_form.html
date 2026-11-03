@@ -1,0 +1,22 @@
+{% extends "tai_khoan/base.html" %}
+{% load static %}
+{% block title %}{{ heading }}{% endblock %}
+{% block content %}
+<section class="card" style="max-width:680px">
+    <h1>{{ heading }}</h1>
+    <p class="muted">Tin mới và nội dung sửa đổi sẽ chờ quản trị viên duyệt trước khi hiển thị công khai.</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
+            {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+        {% endfor %}
+        <button type="submit">Gửi duyệt</button>
+    </form>
+    <datalist id="vn-provinces"></datalist>
+</section>
+<script src="{% static 'tin_tuyen_dung/province_autocomplete.js' %}" defer></script>
+{% endblock %}

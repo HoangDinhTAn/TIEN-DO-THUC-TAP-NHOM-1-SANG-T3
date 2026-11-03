@@ -1,0 +1,17 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Việc làm phù hợp{% endblock %}
+{% block content %}
+<h1>Việc làm phù hợp với hồ sơ của bạn</h1>
+<p class="muted">Điểm matching là gợi ý tham khảo, không phải quyết định tuyển dụng.</p>
+{% for job in page_obj %}
+<article class="card" style="max-width:none;margin:1rem 0;padding:1.25rem">
+    <h2><a href="{% url 'jobs:public_detail' job.id %}">{{ job.title }}</a></h2>
+    <p>{{ job.employer.organization_name }} · {{ job.location }}</p>
+    <h3>Điểm phù hợp: {{ job.match_result.score }}/100</h3>
+    <ul>{% for item in job.match_result.criteria %}<li>{{ item.label }}: {{ item.score }}/100 ({{ item.weight }}%)</li>{% endfor %}</ul>
+    {% if job.match_result.matched_skills %}<p>Kỹ năng phù hợp: {{ job.match_result.matched_skills|join:", " }}</p>{% endif %}
+    {% if job.match_result.missing_skills %}<p>Kỹ năng cần bổ sung: {{ job.match_result.missing_skills|join:", " }}</p>{% endif %}
+</article>
+{% empty %}<p>Hiện chưa có công việc phù hợp. Hãy bổ sung kỹ năng và mong muốn trong hồ sơ.</p>{% endfor %}
+{% if page_obj.has_other_pages %}<nav>{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Trang trước</a>{% endif %} Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Trang sau</a>{% endif %}</nav>{% endif %}
+{% endblock %}

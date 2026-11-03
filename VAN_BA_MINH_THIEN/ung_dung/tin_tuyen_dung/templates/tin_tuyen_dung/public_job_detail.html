@@ -1,0 +1,37 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block content %}
+<article class="card" style="max-width:760px">
+    <p><a href="{% url 'jobs:public_list' %}">← Danh sách việc làm</a></p>
+    <h1>{{ job.title }}</h1>
+    <p><strong>{{ job.employer.organization_name }}</strong></p>
+    <p>{{ job.location }} · {{ job.get_work_mode_display }} · {{ job.get_employment_type_display }}</p>
+    {% if job.category %}<p>Danh mục: {{ job.category.name }}</p>{% endif %}
+    <p>Hạn ứng tuyển: {{ job.deadline|date:"d/m/Y" }}</p>
+    {% if job.salary_min or job.salary_max %}<p>Mức lương: {{ job.salary_min|default:"Thỏa thuận" }}{% if job.salary_max %} – {{ job.salary_max }}{% endif %}</p>{% endif %}
+    <h2>Mô tả công việc</h2><div>{{ job.description|linebreaks }}</div>
+    {% if job.requirements %}<h2>Yêu cầu ứng viên</h2><div>{{ job.requirements|linebreaks }}</div>{% endif %}
+    {% if job.job_skills.all %}
+        <h2>Kỹ năng yêu cầu</h2>
+        <ul>{% for item in job.job_skills.all %}<li>{{ item.skill.name }} — {{ item.get_required_level_display }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if is_student and job.accepts_applications %}
+        <form method="post" action="{% url 'jobs:toggle_saved' job.id %}">
+            {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+            {% if is_saved %}<button type="submit">Bỏ lưu việc làm</button>
+            {% else %}<button type="submit">Lưu việc làm</button>{% endif %}
+        </form>
+    {% endif %}
+    {% if is_student and job.accepts_applications and not is_owner %}
+        {% if application %}
+            <p>Bạn đã ứng tuyển. Trạng thái: <strong>{{ application.get_status_display }}</strong></p>
+            <p><a href="{% url 'applications:student_list' %}">Xem hồ sơ đã ứng tuyển</a></p>
+        {% else %}
+            <p><a href="{% url 'applications:apply' job.id %}"><button type="button">Ứng tuyển ngay</button></a></p>
+        {% endif %}
+    {% endif %}
+</article>
+{% if request.user.is_authenticated and job.accepts_applications and not is_owner %}
+    <p><a href="{% url 'admin_dashboard:report_job' job.id %}">Báo cáo tin tuyển dụng</a></p>
+{% endif %}
+{% endblock %}

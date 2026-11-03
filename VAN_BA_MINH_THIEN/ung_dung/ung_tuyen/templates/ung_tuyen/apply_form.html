@@ -1,0 +1,11 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Ứng tuyển{% endblock %}
+{% block content %}
+<section class="card">
+    <p><a href="{% url 'jobs:public_detail' job.id %}">← Quay lại tin tuyển dụng</a></p>
+    <h1>Ứng tuyển: {{ job.title }}</h1>
+    <p>{{ job.employer.organization_name }} · {{ job.location }}</p>
+    <p>CV sẽ gửi: <strong>{{ resume.original_name }}</strong></p>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Gửi hồ sơ ứng tuyển</button></form>
+</section>
+{% endblock %}

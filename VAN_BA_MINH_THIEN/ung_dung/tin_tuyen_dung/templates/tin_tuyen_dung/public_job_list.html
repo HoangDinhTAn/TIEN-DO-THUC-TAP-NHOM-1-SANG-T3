@@ -1,0 +1,50 @@
+{% extends "tai_khoan/base.html" %}
+{% load static %}
+{% block title %}Việc làm đang tuyển{% endblock %}
+{% block content %}
+<section>
+    <h1>Việc làm đang tuyển</h1>
+    <p class="muted">Chỉ hiển thị tin đã được duyệt và còn hạn ứng tuyển.</p>
+    <form method="get" class="card" style="max-width:none;margin:1rem 0;padding:1.25rem">
+        {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.75rem">
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" style="width:auto">Tìm việc</button>
+        <a href="{% url 'jobs:public_list' %}">Xóa bộ lọc</a>
+    </form>
+    <datalist id="vn-provinces"></datalist>
+    {% if is_student %}<p><a href="{% url 'jobs:saved_list' %}">Xem việc làm đã lưu</a></p>{% endif %}
+    {% for job in jobs %}
+        <article class="card" style="max-width:none;margin:1rem 0;padding:1.25rem">
+            <h2><a href="{% url 'jobs:public_detail' job.id %}">{{ job.title }}</a></h2>
+            <p><strong>{{ job.employer.organization_name }}</strong> · {{ job.location }}</p>
+            <p>{{ job.get_work_mode_display }} · {{ job.get_employment_type_display }}{% if job.category %} · {{ job.category.name }}{% endif %}</p>
+            <p>Hạn ứng tuyển: {{ job.deadline|date:"d/m/Y" }}</p>
+            {% if is_student %}
+                <form method="post" action="{% url 'jobs:toggle_saved' job.id %}">
+                    {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    {% if job.id in saved_job_ids %}<button type="submit" style="width:auto">Bỏ lưu</button>
+                    {% else %}<button type="submit" style="width:auto">Lưu việc</button>{% endif %}
+                </form>
+            {% endif %}
+        </article>
+    {% empty %}
+        <p>Không tìm thấy tin phù hợp. Hãy thử thay đổi từ khóa hoặc bộ lọc.</p>
+    {% endfor %}
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Phân trang">
+            {% if page_obj.has_previous %}<a href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">← Trước</a>{% endif %}
+            <span>Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}<a href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Sau →</a>{% endif %}
+        </nav>
+    {% endif %}
+</section>
+<script src="{% static 'tin_tuyen_dung/province_autocomplete.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Hồ sơ ứng tuyển của tôi{% endblock %}
+{% block content %}
+<h1>Hồ sơ ứng tuyển của tôi</h1>
+{% for application in applications %}
+<article class="card" style="max-width:none;margin:1rem 0;padding:1.25rem">
+    <h2>{% if application.job.accepts_applications %}<a href="{% url 'jobs:public_detail' application.job_id %}">{{ application.job.title }}</a>{% else %}{{ application.job.title }}{% endif %}</h2>
+    <p>{{ application.job.employer.organization_name }} · Đã nộp {{ application.submitted_at|date:"d/m/Y H:i" }}</p>
+    <p>Trạng thái: <strong>{{ application.get_status_display }}</strong></p>
+    <p><a href="{% url 'student_profiles:download_resume_version' application.resume_id %}">Tải bản CV đã nộp</a></p>
+    {% if application.employer_note %}<p>Ghi chú từ nhà tuyển dụng: {{ application.employer_note|linebreaksbr }}</p>{% endif %}
+    {% if application.status == "submitted" or application.status == "reviewing" or application.status == "interview" %}
+    <form method="post" action="{% url 'applications:withdraw' application.id %}">{% csrf_token %}<button type="submit">Rút hồ sơ</button></form>
+    {% endif %}
+</article>
+{% empty %}<p>Bạn chưa ứng tuyển công việc nào.</p>{% endfor %}
+{% endblock %}

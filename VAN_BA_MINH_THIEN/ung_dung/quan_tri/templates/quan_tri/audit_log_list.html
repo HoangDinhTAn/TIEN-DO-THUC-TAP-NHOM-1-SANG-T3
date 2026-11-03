@@ -1,0 +1,14 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Nhật ký quản trị{% endblock %}
+{% block content %}
+<h1>Nhật ký quản trị</h1>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">
+<thead><tr><th>Thời điểm</th><th>Người thực hiện</th><th>Thao tác</th><th>Đối tượng</th><th>Chi tiết</th><th>IP</th></tr></thead>
+<tbody>{% for event in page_obj %}<tr>
+    <td>{{ event.created_at|date:"d/m/Y H:i:s" }}</td><td>{{ event.actor|default:"Tài khoản đã xóa" }}</td>
+    <td>{{ event.action }}</td><td>{{ event.object_label }} ({{ event.object_type }} #{{ event.object_id }})</td>
+    <td>{{ event.details }}</td><td>{{ event.ip_address|default:"—" }}</td>
+</tr>{% empty %}<tr><td colspan="6">Chưa có nhật ký.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% if page_obj.has_other_pages %}<nav>{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Trang trước</a>{% endif %} Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Trang sau</a>{% endif %}</nav>{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Hồ sơ sinh viên{% endblock %}
+{% block content %}
+<section class="card">
+    <h1>Hồ sơ sinh viên</h1>
+    <p class="muted">Hồ sơ được đặt ở chế độ riêng tư cho đến khi bạn bật cho phép tìm kiếm.</p>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="errors">{{ field.errors }}</div>{% endif %}
+            {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+        {% endfor %}
+        <button type="submit">Lưu hồ sơ</button>
+    </form>
+    {% if current_resume %}
+        <p>CV hiện tại: {{ current_resume.original_name }} ({{ current_resume.size_bytes|filesizeformat }})</p>
+        <p><a href="{% url 'student_profiles:download_resume' profile.id %}">Tải CV riêng tư</a></p>
+    {% endif %}
+</section>
+{% if current_resume %}<p><a href="{% url 'cv_analysis:analyze' %}">Phân tích kỹ năng từ CV</a></p>{% endif %}
+{% endblock %}

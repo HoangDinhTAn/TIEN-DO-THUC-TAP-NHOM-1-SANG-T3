@@ -1,0 +1,10 @@
+{% extends "tai_khoan/base.html" %}
+{% block title %}Báo cáo tin tuyển dụng{% endblock %}
+{% block content %}
+<section class="card">
+    <h1>Báo cáo tin tuyển dụng</h1>
+    <p><strong>{{ job.title }}</strong> · {{ job.employer.organization_name }}</p>
+    <p>Báo cáo được gửi cho quản trị viên xem xét. Không gửi thông tin nhạy cảm không cần thiết.</p>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Gửi báo cáo</button></form>
+</section>
+{% endblock %}

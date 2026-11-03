@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Xếp Lịch Học Tự Động</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        table th, table td { border: 1px solid #e5e7eb; text-align: center; vertical-align: middle; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Tiêu đề -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Hệ Thống Xếp Lịch Học Tự Động</h1>
+            <p class="text-gray-600">Nhập danh sách nhiều lớp học phần cùng lúc và xem thời khóa biểu trực quan theo tuần.</p>
+        </div>
+
+        <!-- Form Nhập Liệu Hàng Loạt -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Nhập Danh Sách Lớp Học Phần</h2>
+                <div class="space-x-2">
+                    <button type="button" onclick="addRow()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold transition">+ Thêm dòng</button>
+                    <button type="button" onclick="submitAllClasses()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold transition">💾 Lưu tất cả vào CSDL</button>
+                </div>
+            </div>
+
+            <!-- Bảng danh sách nhập liệu -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-700">
+                            <th class="py-2 px-2">Mã môn</th>
+                            <th class="py-2 px-2">Tên môn học</th>
+                            <th class="py-2 px-2">Tín chỉ</th>
+                            <th class="py-2 px-2">Giảng viên</th>
+                            <th class="py-2 px-2">Thứ</th>
+                            <th class="py-2 px-2">Tiết BĐ</th>
+                            <th class="py-2 px-2">Tiết KT</th>
+                            <th class="py-2 px-2">Cơ sở</th>
+                            <th class="py-2 px-2">Tòa</th>
+                            <th class="py-2 px-2">Phòng</th>
+                            <th class="py-2 px-2">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="input-table-body">
+                        <!-- Dữ liệu dòng sẽ được thêm vào đây bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="input-message" class="mt-3 text-center font-medium text-sm"></div>
+        </div>
+
+        <!-- Khu vực Hiển thị Lưới Thời Khóa Biểu -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Thời Khóa Biểu Theo Tuần</h2>
+                <button onclick="generateSchedule()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2 rounded-lg transition shadow">
+                    🚀 Chạy Xếp Lịch & Hiển Thị
+                </button>
+            </div>
+
+            <div id="status-message" class="mb-4 text-sm font-medium"></div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 text-sm">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700">
+                            <th class="py-3 px-2 w-16">Buổi</th>
+                            <th class="py-3 px-2 w-12">Tiết</th>
+                            <th class="py-3 px-4">Thứ 2</th>
+                            <th class="py-3 px-4">Thứ 3</th>
+                            <th class="py-3 px-4">Thứ 4</th>
+                            <th class="py-3 px-4">Thứ 5</th>
+                            <th class="py-3 px-4">Thứ 6</th>
+                            <th class="py-3 px-4">Thứ 7</th>
+                            <th class="py-3 px-4">Chủ Nhật</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grid-body">
+                        <!-- Render lưới thời khóa biểu -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        // Tự động thêm sẵn 1 dòng khi mở trang
+        window.onload = function() {
+            addRow();
+        };
+
+        function addRow(data = {}) {
+            const tbody = document.getElementById("input-table-body");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td class="p-1"><input type="text" class="sub-code w-full p-1 border rounded text-xs" value="${data.code || ''}" placeholder="INT115"></td>
+                <td class="p-1"><input type="text" class="sub-name w-full p-1 border rounded text-xs" value="${data.name || ''}" placeholder="Python"></td>
+                <td class="p-1"><input type="number" class="sub-credits w-16 p-1 border rounded text-xs" value="${data.credits || 3}"></td>
+                <td class="p-1"><input type="text" class="teacher-name w-full p-1 border rounded text-xs" value="${data.teacher || ''}" placeholder="Nguyễn Văn A"></td>
+                <td class="p-1">
+                    <select class="day-of-week p-1 border rounded text-xs">
+                        <option ${data.day === 'Thứ 2' ? 'selected' : ''}>Thứ 2</option>
+                        <option ${data.day === 'Thứ 3' ? 'selected' : ''}>Thứ 3</option>
+                        <option ${data.day === 'Thứ 4' ? 'selected' : ''}>Thứ 4</option>
+                        <option ${data.day === 'Thứ 5' ? 'selected' : ''}>Thứ 5</option>
+                        <option ${data.day === 'Thứ 6' ? 'selected' : ''}>Thứ 6</option>
+                        <option ${data.day === 'Thứ 7' ? 'selected' : ''}>Thứ 7</option>
+                        <option ${data.day === 'Chủ Nhật' ? 'selected' : ''}>Chủ Nhật</option>
+                    </select>
+                </td>
+                <td class="p-1"><input type="number" class="start-period w-14 p-1 border rounded text-xs" value="${data.start || 1}" min="1" max="11"></td>
+                <td class="p-1"><input type="number" class="end-period w-14 p-1 border rounded text-xs" value="${data.end || 3}" min="1" max="11"></td>
+                <td class="p-1"><input type="text" class="campus w-20 p-1 border rounded text-xs" value="${data.campus || 'Cơ sở 1'}"></td>
+                <td class="p-1"><input type="text" class="building w-20 p-1 border rounded text-xs" value="${data.building || 'Tòa A'}"></td>
+                <td class="p-1"><input type="text" class="room-number w-20 p-1 border rounded text-xs" value="${data.room || 'P.201'}"></td>
+                <td class="p-1 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-500 font-bold hover:text-red-700">×</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        async function submitAllClasses() {
+            const rows = document.querySelectorAll("#input-table-body tr");
+            const dataList = [];
+
+            rows.forEach(row => {
+                dataList.push({
+                    subject_code: row.querySelector(".sub-code").value,
+                    subject_name: row.querySelector(".sub-name").value,
+                    credits: parseInt(row.querySelector(".sub-credits").value) || 3,
+                    teacher_name: row.querySelector(".teacher-name").value,
+                    day_of_week: row.querySelector(".day-of-week").value,
+                    start_period: parseInt(row.querySelector(".start-period").value),
+                    end_period: parseInt(row.querySelector(".end-period").value),
+                    campus: row.querySelector(".campus").value,
+                    building: row.querySelector(".building").value,
+                    room_number: row.querySelector(".room-number").value
+                });
+            });
+
+            if (dataList.length === 0) {
+                alert("Vui lòng nhập ít nhất một lớp học phần!");
+                return;
+            }
+
+            const msgDiv = document.getElementById("input-message");
+
+            try {
+                const res = await fetch(`${API_URL}/api/classes/detailed/batch`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dataList)
+                });
+                
+                const result = await res.json();
+                
+                if (res.ok) {
+                    msgDiv.textContent = result.message;
+                    msgDiv.className = "mt-3 text-center font-medium text-sm text-green-600";
+                } else {
+                    msgDiv.textContent = "❌ Lỗi từ server: " + JSON.stringify(result.detail || result);
+                    msgDiv.className = "mt-3 text-center font-medium text-sm text-red-600";
+                }
+            } catch (err) {
+                msgDiv.textContent = "❌ Không thể kết nối tới Server (Kiểm tra lại uvicorn trên terminal!)";
+                msgDiv.className = "mt-3 text-center font-medium text-sm text-red-600";
+            }
+        }
+
+        async function generateSchedule() {
+            const statusDiv = document.getElementById("status-message");
+            statusDiv.textContent = "⏳ Đang chạy thuật toán xếp lịch...";
+            statusDiv.className = "mb-4 text-sm font-medium text-blue-600";
+            
+            try {
+                const response = await fetch(`${API_URL}/api/schedule/generate`, {
+                    method: "POST"
+                });
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    statusDiv.textContent = "✅ Xếp lịch thành công!";
+                    statusDiv.className = "mb-4 text-sm font-medium text-green-600";
+                    renderGrid(result.data);
+                } else {
+                    statusDiv.textContent = "❌ Lỗi: " + result.message;
+                    statusDiv.className = "mb-4 text-sm font-medium text-red-600";
+                }
+            } catch (error) {
+                statusDiv.textContent = "❌ Lỗi kết nối đến Server: " + error;
+                statusDiv.className = "mb-4 text-sm font-medium text-red-600";
+            }
+        }
+
+        function renderGrid(scheduleData) {
+            const tbody = document.getElementById("grid-body");
+            tbody.innerHTML = "";
+
+            const days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
+            const scheduleMap = {};
+            const skippedCells = {};
+
+            scheduleData.forEach(item => {
+                const day = item.day_of_week;
+                if (!scheduleMap[day]) scheduleMap[day] = {};
+                scheduleMap[day][item.start_period] = item;
+
+                for (let p = item.start_period + 1; p <= item.end_period; p++) {
+                    skippedCells[`${day}-${p}`] = true;
+                }
+            });
+
+            for (let p = 1; p <= 11; p++) {
+                const row = document.createElement("tr");
+
+                if (p === 1) {
+                    const tdSession = document.createElement("td");
+                    tdSession.rowSpan = 5;
+                    tdSession.className = "font-semibold bg-gray-50 text-gray-600";
+                    tdSession.textContent = "Sáng";
+                    row.appendChild(tdSession);
+                } else if (p === 6) {
+                    const tdSession = document.createElement("td");
+                    tdSession.rowSpan = 6;
+                    tdSession.className = "font-semibold bg-gray-50 text-gray-600";
+                    tdSession.textContent = "Chiều";
+                    row.appendChild(tdSession);
+                }
+
+                const tdPeriod = document.createElement("td");
+                tdPeriod.className = "py-2 px-2 font-medium bg-gray-50 text-gray-600";
+                tdPeriod.textContent = p;
+                row.appendChild(tdPeriod);
+
+                days.forEach(day => {
+                    const cellKey = `${day}-${p}`;
+                    if (skippedCells[cellKey]) return;
+
+                    const td = document.createElement("td");
+                    td.className = "p-1 h-16 relative";
+
+                    if (scheduleMap[day] && scheduleMap[day][p]) {
+                        const item = scheduleMap[day][p];
+                        const span = item.end_period - item.start_period + 1;
+                        td.rowSpan = span;
+                        td.className = "p-2 bg-amber-50 border border-amber-200 text-left align-top rounded shadow-sm";
+
+                        td.innerHTML = `
+                            <div class="font-bold text-gray-900 text-xs">${item.subject_name} (${item.subject_code})</div>
+                            <div class="text-xs text-gray-600 mt-1">📍 ${item.room_info}</div>
+                            <div class="text-xs text-gray-600">👨‍🏫 ${item.teacher_name}</div>
+                            <div class="text-[10px] text-gray-500 mt-1 font-semibold">(${span} tiết: ${item.start_period} - ${item.end_period})</div>
+                        `;
+                    }
+                    row.appendChild(td);
+                });
+
+                tbody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
